@@ -62,6 +62,13 @@ Usage examples:
   # Batch conversion of example pipelines (real working example)
   pixi run -e dev python scripts/cppipe_to_json.py --batch scripts/example_pipelines/
 
+  # QUICK TEST FOR DEVELOPMENT - Test script and check for consistency:
+  # (Assumes example_pipelines/*.json are committed to git)
+  cd /Users/shsingh/Documents/GitHub/nf/cp-42x-dev && \
+    pixi run -e dev python scripts/cppipe_to_json.py --batch scripts/example_pipelines/ && \
+    git diff --stat scripts/example_pipelines/*.json && \
+    echo "No differences = ✓ Conversion is consistent" || echo "Changes detected above"
+
   # With plugins loaded
   CELLPROFILER_PLUGINS=/path/to/CellProfiler-plugins/active_plugins pixi run -e dev python scripts/cppipe_to_json.py input.cppipe
 

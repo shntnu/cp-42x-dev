@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python:*)",
       "Bash(pixi install:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "Bash(pixi run:*)"
     ],
     "deny": [],
     "ask": []
