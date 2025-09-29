@@ -8,6 +8,13 @@ Usage:
 
 Quick test:
   pixi run -e dev python scripts/cppipe_to_json.py --batch scripts/example_pipelines/
+
+Plugin Support:
+  The script will automatically load plugins from the default CellProfiler plugin
+  directory if configured. To use a custom plugin directory, set the
+  CELLPROFILER_PLUGINS environment variable:
+
+  CELLPROFILER_PLUGINS=/path/to/plugins pixi run -e dev python scripts/cppipe_to_json.py input.cppipe
 """
 
 import sys
@@ -18,7 +25,7 @@ from typing import Optional
 
 try:
     from cellprofiler_core.pipeline import Pipeline
-    from cellprofiler_core.preferences import set_plugin_directory
+    from cellprofiler_core.preferences import get_plugin_directory, set_plugin_directory
 except ImportError:
     print(
         "ERROR: CellProfiler not found. Run this script in the CellProfiler environment.",
@@ -30,12 +37,18 @@ except ImportError:
     )
     sys.exit(1)
 
-# Load plugins if environment variable is set
+# Load plugins - try environment variable first, then default location
 plugins_dir = os.environ.get("CELLPROFILER_PLUGINS")
 if plugins_dir and os.path.exists(plugins_dir):
     sys.path.insert(0, plugins_dir)
     set_plugin_directory(plugins_dir)
-    print(f"Loaded plugins from: {plugins_dir}")
+    print(f"Loaded plugins from custom location: {plugins_dir}")
+else:
+    # Try to use the default plugin directory
+    default_plugins = get_plugin_directory()
+    if default_plugins and os.path.exists(default_plugins):
+        sys.path.insert(0, default_plugins)
+        print(f"Loaded plugins from default location: {default_plugins}")
 
 app = typer.Typer(help="Convert CellProfiler pipeline files (.cppipe) to JSON format")
 
